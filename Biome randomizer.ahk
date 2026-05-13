@@ -1,9 +1,9 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
-#Include ../../Fisch/OCR.ahk
+#Include OCR.ahk
 #Include CaptureScreen.ahk
 #Include CreateFormData.ahk
-FileInstall('../../Fisch/OCR.ahk', A_Temp '\AHK_SOLS_OCR.ahk', 1)
+FileInstall('OCR.ahk', A_Temp '\AHK_SOLS_OCR.ahk', 1)
 FileInstall('CaptureScreen.ahk', A_Temp '\AHK_CAPTURE_SCREEN.ahk', 1)
 FileInstall('CreateFormData.ahk', A_Temp '\UPLOAD_HELPER.ahk', 1)
 SendMode('Event')

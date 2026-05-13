@@ -19,7 +19,7 @@ AutoHotkey script for automatic use of the Biome Randomizer and Strange Controll
 ## Installation
 
 ### If using AHK version
-1. Place `Biome randomizer.ahk`, `settings.ini`, `CaptureScreen.ahk`, and `CreateFormData.ahk` in the same folder.
+1. Place `Biome randomizer.ahk`, `settings.ini`, `CaptureScreen.ahk`, `OCR.ahk`, and `CreateFormData.ahk` in the same folder.
 2. Launch `Biome randomizer.ahk` with AutoHotkey v2.
 
 ### If using EXE version

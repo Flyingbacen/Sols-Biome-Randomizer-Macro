@@ -60,6 +60,7 @@ DiscordUserID := IniRead(IniFile, "Discord Webhook", "DiscordUserID", "")
 
 BiomeRandomizerEnabled := IniRead(IniFile, "Toggles", "BiomeRandomizerEnabled", "true") == "true" ? true : false
 StrangeControllerEnabled := IniRead(IniFile, "Toggles", "StrangeControllerEnabled", "true") == "true" ? true : false
+IgnoreOCR := IniRead(IniFile, "Toggles", "IgnoreOCR", "false") == "true" ? true : false
 
 ; -- cooldowns
 BiomeRandomizerCooldownMinutes := IniRead(IniFile, "Cooldowns", "BiomeRandomizerCooldownMinutes", 35.2)
@@ -209,6 +210,7 @@ OnGuiClose(*) {
     IniWrite(BypassCraftClose ? "true" : "false", IniFile, "Toggles", "BypassCraftClose")
     IniWrite(BiomeRandomizerEnabled ? "true" : "false", IniFile, "Toggles", "BiomeRandomizerEnabled")
     IniWrite(StrangeControllerEnabled ? "true" : "false", IniFile, "Toggles", "StrangeControllerEnabled")
+    IniWrite(IgnoreOCR ? "true" : "false", IniFile, "Toggles", "IgnoreOCR")
 
     IniWrite(BiomeRandomizerCooldownMinutes, IniFile, "Cooldowns", "BiomeRandomizerCooldownMinutes")
     IniWrite(StrangeControllerCooldownMinutes, IniFile, "Cooldowns", "StrangeControllerCooldownMinutes")
@@ -569,42 +571,16 @@ UseItem(Item) {
     AdjustedTopX := WindowX + RectangleTopX
     AdjustedTopY := WindowY + RectangleTopY
     
-    results := OCR.FromRect(AdjustedTopX, AdjustedTopY, RectangleWidth, RectangleHeight, {lang: "en-US", invertcolors: true, grayscale: true}).Text
-    OutputDebug("OCR text: " . results)
-    if (results = "") {
-        Return False
+    if (!IgnoreOCR) {
+        results := OCR.FromRect(AdjustedTopX, AdjustedTopY, RectangleWidth, RectangleHeight, {lang: "en-US", invertcolors: true, grayscale: true}).Text
+        OutputDebug("OCR text: " . results)
+        if (results = "") {
+            Return False
+        }
+        results := Trim(StrSplit(results, "x")[1]) ; sometimes recognizes the amount.
     }
-    results := Trim(StrSplit(results, "x")[1]) ; sometimes recognizes the amount.
-    
     ; If exact or fuzzy match is found
-    if (InStr(results, Item)) {
-        MouseClick("left", RectangleMidX, RectangleMidY,, 5)
-        Sleep(200)
-        MouseClick("left", UseButtonX, UseButtonY,, 5)
-        Sleep(300)
-        MouseClick("left", InventoryX, InventoryY,, 5)
-
-        if Crafting { 
-            ; only works for mari's cauldron
-            Send("f")
-            Sleep(500)
-            if CraftingHeavenly {
-                MouseClick("left", Integer(A_ScreenWidth / 1.2), A_ScreenHeight // 2,, 5) ; crafting menu
-                Send("{WheelDown 10}")
-                MouseClick("left", 1598, 664,, 5) ; heavenly potion
-                MouseClick("left", 229, 825,, 5) ; open recipe menu
-                MouseClick("left", 1079, 686,, 5) ; attempt to craft it
-            }
-        }
-
-        ; Reactivate previous window if it still exists
-        if (WinExist("ahk_id " . CurrentWindow)) {
-            WinActivate("ahk_id " . CurrentWindow)
-        }
-
-        return true
-    }
-    else if (FuzzySearch(results, Item, false) <= 3) {
+    if (IgnoreOCR || FuzzySearch(results, Item, false) <= 3) {
         MouseClick("left", RectangleMidX, RectangleMidY,, 5)
         Sleep(200)
         MouseClick("left", UseButtonX, UseButtonY,, 5)

@@ -579,7 +579,7 @@ UseItem(Item) {
         }
         results := Trim(StrSplit(results, "x")[1]) ; sometimes recognizes the amount.
     }
-    ; If exact or fuzzy match is found
+    ; If fuzzy match is found
     if (IgnoreOCR || FuzzySearch(results, Item, false) <= 3) {
         MouseClick("left", RectangleMidX, RectangleMidY,, 5)
         Sleep(200)
